@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Room Expense Manager</title>
+  <meta name="description" content="Offline room expense manager for roommates with automatic split, settlements, reports, and budgets." />
+   <link rel="icon" type="image/png" href="assets/icons/logo.png">
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="app-shell" id="appShell">
+    <aside class="sidebar" aria-label="Primary navigation">
+      <div class="brand-panel">
+        <img class="logo-mark" src="assets/icons/logo.png" alt="Room Expense Manager logo" />
+        <div>
+          <p class="brand-title">Room Expense</p>
+          <p class="brand-subtitle">Manager</p>
+        </div>
+      </div> 
+      <nav class="sidebar-nav" role="navigation" aria-label="Application sections">
+        <button class="nav-link active" data-view="dashboard" aria-label="Open dashboard">
+          <span class="nav-icon">🏠</span>
+          <span>Dashboard</span>
+        </button>
+        <button class="nav-link" data-view="personal" aria-label="Open personal tracker">
+          <span class="nav-icon">👤</span>
+          <span>Personal Tracker</span>
+        </button>
+        <button class="nav-link" data-view="expense" aria-label="Add expense">
+          <span class="nav-icon">➕</span>
+          <span>Add Expense</span>
+        </button>
+        <button class="nav-link" data-view="history" aria-label="View expense history">
+          <span class="nav-icon">📜</span>
+          <span>Expense History</span>
+        </button>
+        <button class="nav-link" data-view="roommates" aria-label="Manage roommates">
+          <span class="nav-icon">👥</span>
+          <span>Roommates</span>
+        </button>
+        <button class="nav-link" data-view="reports" aria-label="View reports">
+          <span class="nav-icon">📊</span>
+          <span>Reports</span>
+        </button>
+        <button class="nav-link" data-view="settlements" aria-label="View settlements">
+          <span class="nav-icon">💱</span>
+          <span>Settlements</span>
+        </button>
+        <button class="nav-link" data-view="budget" aria-label="Budget settings">
+          <span class="nav-icon">💰</span>
+          <span>Budget</span>
+        </button>
+        <button class="nav-link" data-view="feature" data-feature="room" aria-label="Manage room">
+          <span class="nav-icon">🏢</span>
+          <span>Room</span>
+        </button>
+        <button class="nav-link" data-view="feature" data-feature="recurringExpenses" aria-label="Manage recurring bills">
+          <span class="nav-icon">🔁</span>
+          <span>Recurring Bills</span>
+        </button>
+        <button class="nav-link" data-view="feature" data-feature="meals" aria-label="Track meals">
+          <span class="nav-icon">🍛</span>
+          <span>Meals</span>
+        </button>
+        <button class="nav-link" data-view="feature" data-feature="shoppingItems" aria-label="Manage shopping list">
+          <span class="nav-icon">🛒</span>
+          <span>Shopping</span>
+        </button>
+        <button class="nav-link" data-view="feature" data-feature="chores" aria-label="Manage chores">
+          <span class="nav-icon">🧹</span>
+          <span>Chores</span>
+        </button>
+        <button class="nav-link" data-view="feature" data-feature="deposits" aria-label="Manage deposits">
+          <span class="nav-icon">🧾</span>
+          <span>Deposits</span>
+        </button>
+        <button class="nav-link" data-view="feature" data-feature="inventory" aria-label="Manage inventory">
+          <span class="nav-icon">🪑</span>
+          <span>Inventory</span>
+        </button>
+        <button class="nav-link" data-view="feature" data-feature="maintenanceRequests" aria-label="Manage maintenance">
+          <span class="nav-icon">🔧</span>
+          <span>Maintenance</span>
+        </button>
+        <button class="nav-link" data-view="feature" data-feature="notifications" aria-label="View notifications">
+          <span class="nav-icon">🔔</span>
+          <span>Notifications</span>
+        </button>
+        <button class="nav-link" data-view="settings" aria-label="Application settings">
+          <span class="nav-icon">⚙️</span>
+          <span>Settings</span>
+        </button>
+      </nav>
+      <div class="sidebar-footer">
+        <p>Persistent offline storage <br>
+          @ make with MM(manish) 
+        </p>
+      </div>
+    </aside>
+
+    <main class="main-panel">
+      <header class="topbar">
+        <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Open sidebar">☰</button>
+        <div class="topbar-left">
+          <h1 class="page-heading" id="viewTitle">Dashboard</h1>
+          <div class="topbar-search">
+            <input id="globalSearch" type="search" placeholder="Search expenses, roommates, categories..." aria-label="Search expenses, roommates, categories" />
+            <span class="search-icon">🔍</span>
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <button class="button button-secondary" id="quickAddBtn" type="button">Quick Add Expense</button>
+          <button class="button button-icon" id="themeToggleBtn" type="button" aria-label="Toggle theme">🌙</button>
+        </div>
+      </header>
+
+      <section class="content-panel" id="dashboardView" data-view="dashboard">
+        <div class="page-grid">
+          <div class="card card-hero">
+            <div>
+              <p class="eyebrow">Overview</p>
+              <h2>Manage every room expense automatically</h2>
+              <p class="card-copy">Track payments, share costs, and resolve settlements with a clear roommate-first dashboard.</p>
+            </div>
+            <div class="hero-illustration">🏠</div>
+          </div>
+
+          <div class="stat-grid">
+            <article class="stat-card">
+              <p class="stat-title">Monthly Expense</p>
+              <h3 id="statMonthly">₹0</h3>
+            </article>
+            <article class="stat-card">
+              <p class="stat-title">Total Paid</p>
+              <h3 id="statPaid">₹0</h3>
+            </article>
+            <article class="stat-card">
+              <p class="stat-title">Pending Balance</p>
+              <h3 id="statPending">₹0</h3>
+            </article>
+            <article class="stat-card">
+              <p class="stat-title">Roommates</p>
+              <h3 id="statRoommates">0</h3>
+            </article>
+          </div>
+
+          <div class="dashboard-cards">
+            <section class="dashboard-card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Budget</p>
+                  <h3>Monthly budget <span id="budgetValue">₹0</span></h3>
+                </div>
+                <span class="chip" id="budgetStatus">On track</span>
+              </div>
+              <div class="budget-progress">
+                <div class="progress-bar"><div id="budgetProgress" class="progress-fill"></div></div>
+                <p class="progress-copy"><span id="budgetRemaining">₹0</span> remaining</p>
+              </div>
+            </section>
+
+            <section class="dashboard-card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Settlement summary</p>
+                  <h3>Minimum transactions</h3>
+                </div>
+              </div>
+              <div class="small-list" id="summaryTransactions"></div>
+            </section>
+          </div>
+
+          <section class="activity-panel">
+            <div class="card-header">
+              <div>
+                <p class="eyebrow">Recent activity</p>
+                <h3>What changed</h3>
+              </div>
+              <div class="toolbar-row activity-filters"><select id="activityFilterType" aria-label="Filter activity"><option value="">All activity</option><option value="expense">Expenses</option><option value="settlement">Settlements</option><option value="room">Room</option><option value="recurring">Recurring bills</option><option value="conversion">Other</option></select><input id="activityFilterDate" type="date" aria-label="Filter activity by date" /></div>
+            </div>
+            <div id="activityTimeline" class="timeline-list"></div>
+          </section>
+
+          <section class="dashboard-card">
+            <div class="card-header"><div><p class="eyebrow">Recurring bills</p><h3>Upcoming expenses</h3></div><button class="button button-secondary" id="dashboardRecurringBtn" type="button">Manage bills</button></div>
+            <div id="dashboardRecurringList" class="small-list"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="content-panel hidden" id="personalView" data-view="personal">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Personal tracker</p>
+            <h2>My spending overview</h2>
+          </div>
+          <div class="toolbar-row">
+            <button class="button button-secondary personal-range" data-range="today" type="button">Today</button>
+            <button class="button button-secondary personal-range" data-range="yesterday" type="button">Yesterday</button>
+            <button class="button button-secondary personal-range" data-range="thisWeek" type="button">This Week</button>
+            <button class="button button-secondary personal-range" data-range="lastWeek" type="button">Last Week</button>
+            <button class="button button-secondary personal-range" data-range="thisMonth" type="button">This Month</button>
+            <button class="button button-secondary personal-range" data-range="lastMonth" type="button">Last Month</button>
+            <button class="button button-secondary personal-range" data-range="last3Months" type="button">Last 3 Months</button>
+            <button class="button button-secondary personal-range" data-range="thisYear" type="button">This Year</button>
+            <button class="button button-secondary personal-range" data-range="allTime" type="button">All Time</button>
+          </div>
+        </div>
+        <div class="personal-range-form">
+          <div class="input-group">
+            <label for="personalFromDate">From</label>
+            <input id="personalFromDate" type="date" />
+          </div>
+          <div class="input-group">
+            <label for="personalToDate">To</label>
+            <input id="personalToDate" type="date" />
+          </div>
+        </div>
+
+        <div class="stat-grid personal-overview-grid">
+          <article class="stat-card">
+            <p class="stat-title">Personal Spending</p>
+            <h3 id="personalSpendingValue">₹0</h3>
+          </article>
+          <article class="stat-card">
+            <p class="stat-title">Room Spending Paid By Me</p>
+            <h3 id="personalRoomPaidValue">₹0</h3>
+          </article>
+          <article class="stat-card">
+            <p class="stat-title">My Personal Expenses</p>
+            <h3 id="personalMyExpensesValue">₹0</h3>
+          </article>
+          <article class="stat-card">
+            <p class="stat-title">I Owe</p>
+            <h3 id="personalIOweValue">₹0</h3>
+          </article>
+          <article class="stat-card">
+            <p class="stat-title">I Will Receive</p>
+            <h3 id="personalIReceiveValue">₹0</h3>
+          </article>
+        </div>
+
+        <div class="personal-layout">
+          <section class="dashboard-card">
+            <div class="card-header"><div><p class="eyebrow">Period comparison</p><h3 id="personalComparisonTitle">Current vs previous period</h3></div><span class="chip" id="personalComparisonChange">—</span></div>
+            <div class="comparison-grid"><div><small>Current</small><strong id="personalComparisonCurrent">₹0</strong></div><div><small>Previous</small><strong id="personalComparisonPrevious">—</strong></div></div>
+          </section>
+          <section class="dashboard-card">
+            <div class="card-header"><div><p class="eyebrow">My money</p><h3>Where it went</h3></div></div>
+            <div class="comparison-grid"><div><small>Personal spending</small><strong id="personalMoneyPersonal">₹0</strong></div><div><small>Room spending paid</small><strong id="personalMoneyRoom">₹0</strong></div><div><small>Total outflow</small><strong id="personalMoneyTotal">₹0</strong></div></div>
+            <div class="money-bar"><span id="personalMoneyPersonalBar"></span><span id="personalMoneyRoomBar"></span></div>
+          </section>
+        </div>
+
+        <div class="personal-layout">
+          <section class="dashboard-card">
+            <div class="card-header">
+              <div>
+                <p class="eyebrow">Individual spending</p>
+                <h3>Room spending overview</h3>
+              </div>
+            </div>
+            <div id="personalMemberBreakdown" class="personal-list"></div>
+          </section>
+
+          <section class="dashboard-card">
+            <div class="card-header">
+              <div>
+                <p class="eyebrow">Spending over time</p>
+                <h3>Trend</h3>
+              </div>
+            </div>
+            <div class="chart-card compact-chart">
+              <canvas id="personalTrendChart" width="420" height="220" aria-label="Personal trend chart"></canvas>
+            </div>
+          </section>
+
+          <section class="dashboard-card">
+            <div class="card-header">
+              <div>
+                <p class="eyebrow">Top spenders</p>
+                <h3>By total paid</h3>
+              </div>
+            </div>
+            <div id="personalTopSpenders" class="personal-list"></div>
+          </section>
+
+          <section class="dashboard-card">
+            <div class="card-header">
+              <div>
+                <p class="eyebrow">Category spend</p>
+                <h3>Where your money went</h3>
+              </div>
+            </div>
+            <div class="chart-card compact-chart">
+              <canvas id="personalCategoryChart" width="420" height="220" aria-label="Personal category chart"></canvas>
+            </div>
+            <div id="personalCategoryList" class="personal-list small-gap"></div>
+          </section>
+
+          <section class="dashboard-card">
+            <div class="card-header"><div><p class="eyebrow">Payment methods</p><h3>Personal payment mix</h3></div></div>
+            <div id="personalPaymentList" class="personal-list"></div>
+          </section>
+
+          <section class="dashboard-card">
+            <div class="card-header">
+              <div>
+                <p class="eyebrow">Budget</p>
+                <h3>Monthly personal budget</h3>
+              </div>
+            </div>
+            <div class="budget-progress">
+              <div class="progress-bar"><div id="personalBudgetProgress" class="progress-fill"></div></div>
+              <p class="progress-copy"><span id="personalBudgetUsed">₹0</span> / <span id="personalBudgetLimit">₹0</span> · <span id="personalBudgetPercent">0%</span> used</p>
+            </div>
+            <div class="form-grid compact-form">
+              <div class="input-group">
+                <label for="personalBudgetAmount">Monthly limit</label>
+                <input id="personalBudgetAmount" type="number" min="0" step="1" placeholder="10000" />
+              </div>
+              <div class="input-group">
+                <label for="personalBudgetAlert">Alert at %</label>
+                <input id="personalBudgetAlert" type="number" min="0" max="100" step="1" value="75" />
+              </div>
+              <div class="form-actions full-width">
+                <button class="button button-primary" id="personalBudgetSaveBtn" type="button">Save budget</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="dashboard-card">
+            <div class="card-header">
+              <div>
+                <p class="eyebrow">Smart insights</p>
+                <h3>What the numbers say</h3>
+              </div>
+            </div>
+            <ul id="personalInsights" class="insight-list"></ul>
+          </section>
+
+          <section class="dashboard-card">
+            <div class="card-header">
+              <div>
+                <p class="eyebrow">Recent activity</p>
+                <h3>Latest personal expenses</h3>
+              </div>
+              <button class="button button-secondary" id="personalViewAllBtn" type="button">View all</button>
+            </div>
+            <div id="personalRecentList" class="personal-list"></div>
+          </section>
+
+          <section class="dashboard-card full-span">
+            <div class="card-header"><div><p class="eyebrow">Transactions</p><h3>Filtered activity</h3></div><div class="toolbar-row"><input id="personalTransactionSearch" type="search" placeholder="Search transactions" aria-label="Search personal transactions" /><select id="personalTransactionCategory"><option value="">All categories</option></select><select id="personalTransactionMethod"><option value="">All payment methods</option><option>Cash</option><option>UPI</option><option>Card</option><option>Bank Transfer</option><option>Other</option><option>Not specified</option></select><select id="personalTransactionType"><option value="">All types</option><option value="personal">Personal</option><option value="shared">Shared</option></select></div></div>
+            <div id="personalTransactionList" class="personal-list"></div>
+            <div class="form-actions"><button class="button button-secondary" id="personalClearFiltersBtn" type="button">Clear All Filters</button><button class="button button-secondary" id="personalExportCsvBtn" type="button">Export CSV</button><button class="button button-secondary" id="personalPrintBtn" type="button">Print Report</button></div>
+          </section>
+
+          <section class="dashboard-card full-span">
+            <div class="card-header">
+              <div>
+                <p class="eyebrow">Add personal expense</p>
+                <h3>Track an expense that is not shared</h3>
+              </div>
+            </div>
+            <form id="personalExpenseForm" class="form-grid compact-form" aria-label="Personal expense form">
+              <div class="input-group">
+                <label for="personalExpenseName">Expense name</label>
+                <input id="personalExpenseName" name="name" type="text" placeholder="Coffee" required />
+              </div>
+              <div class="input-group">
+                <label for="personalExpenseAmount">Amount</label>
+                <input id="personalExpenseAmount" name="amount" type="number" min="1" step="0.01" placeholder="0.00" required />
+              </div>
+              <div class="input-group">
+                <label for="personalExpenseCategory">Category</label>
+                <select id="personalExpenseCategory" name="category" required></select>
+              </div>
+              <div class="input-group">
+                <label for="personalExpenseDate">Date</label>
+                <input id="personalExpenseDate" name="date" type="date" required />
+              </div>
+              <div class="input-group">
+                <label for="personalExpenseMethod">Payment method</label>
+                <select id="personalExpenseMethod" name="method" required>
+                  <option value="Cash">Cash</option>
+                  <option value="UPI">UPI</option>
+                  <option value="Card">Card</option>
+                  <option value="Bank Transfer">Bank Transfer</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div class="input-group">
+                <label for="personalExpenseNotes">Notes</label>
+                <textarea id="personalExpenseNotes" name="notes" rows="2"></textarea>
+              </div>
+              <div class="input-group">
+                <label for="personalExpenseReceipt">Receipt</label>
+                <input id="personalExpenseReceipt" name="receipt" type="file" accept="image/*,.pdf" />
+              </div>
+              <div class="form-actions full-width">
+                <button class="button button-primary" id="personalExpenseSaveBtn" type="submit">Save personal expense</button>
+                <button class="button button-secondary" id="personalExpenseResetBtn" type="button">Clear</button>
+              </div>
+            </form>
+          </section>
+        </div>
+      </section>
+
+      <section class="content-panel hidden" id="expenseView" data-view="expense">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Expenses</p>
+            <h2>Add a new expense</h2>
+          </div>
+        </div>
+        <form id="expenseForm" class="form-grid" aria-label="Add expense form">
+          <div class="input-group">
+            <label for="expenseAmount">Amount</label>
+            <input id="expenseAmount" name="amount" type="number" min="1" step="0.01" placeholder="0.00" required />
+          </div>
+          <div class="input-group">
+            <label for="expenseCategory">Category</label>
+            <select id="expenseCategory" name="category" required></select>
+          </div>
+          <div class="input-group">
+            <label for="expenseDescription">Description</label>
+            <select id="expenseDescription" name="description" required></select>
+          </div>
+          <div class="input-group">
+            <label for="expenseDate">Date</label>
+            <input id="expenseDate" name="date" type="date" required />
+          </div>
+          <div class="input-group">
+            <label for="expensePaidBy">Paid by</label>
+            <select id="expensePaidBy" name="paidBy" required></select>
+          </div>
+          <div class="input-group full-width">
+            <label>Split between</label>
+            <div id="splitRoommates" class="split-grid"></div>
+          </div>
+          <div class="input-group full-width">
+            <label>Split type</label>
+            <div class="radio-row" id="splitTypeContainer">
+              <label><input type="radio" name="splitType" value="equal" checked /> Equal</label>
+              <label><input type="radio" name="splitType" value="custom" /> Custom</label>
+              <label><input type="radio" name="splitType" value="percentage" /> Percentage</label>
+            </div>
+          </div>
+          <div class="input-group full-width" id="splitDetails"></div>
+          <div class="input-group">
+            <label for="expenseMethod">Payment method</label>
+            <select id="expenseMethod" name="method" required>
+              <option value="Cash">Cash</option>
+              <option value="UPI">UPI</option>
+              <option value="Card">Card</option>
+              <option value="Bank Transfer">Bank Transfer</option>
+            </select>
+          </div>
+          <div class="input-group full-width">
+            <label for="expenseNotes">Notes</label>
+            <textarea id="expenseNotes" name="notes" rows="3" placeholder="Add any note for this expense"></textarea>
+          </div>
+          <div class="form-actions full-width">
+            <button class="button button-primary" id="expenseSaveBtn" type="submit">Save Expense</button>
+            <button class="button button-secondary" id="expenseCancelBtn" type="button">Cancel</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="content-panel hidden" id="historyView" data-view="history">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Expense history</p>
+            <h2>Review and manage expense records</h2>
+          </div>
+          <div class="toolbar-row">
+            <input id="historySearch" type="search" placeholder="Search history" aria-label="Search expense history" />
+            <select id="historyFilterCategory"><option value="">All categories</option></select>
+            <select id="historyFilterRoommate"><option value="">All roommates</option></select>
+            <select id="historyFilterMethod">
+              <option value="">All payment methods</option>
+              <option value="Cash">Cash</option>
+              <option value="UPI">UPI</option>
+              <option value="Card">Card</option>
+              <option value="Bank Transfer">Bank Transfer</option>
+            </select>
+            <select id="historySort"><option value="newest">Newest</option><option value="oldest">Oldest</option><option value="highest">Highest amount</option><option value="lowest">Lowest amount</option></select>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table" aria-label="Expense history table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Category</th>
+                <th>Amount</th>
+                <th>Paid by</th>
+                <th>Split</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="historyTableBody"></tbody>
+          </table>
+        </div>
+        <div class="pagination" id="historyPagination"></div>
+      </section>
+
+      <section class="content-panel hidden" id="roommatesView" data-view="roommates">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Roommates</p>
+            <h2>Manage everyone in your space</h2>
+          </div>
+          <button class="button button-primary" id="addRoommateBtn" type="button">Add roommate</button>
+        </div>
+        <div class="roommate-grid" id="roommateList"></div>
+      </section>
+
+      <section class="content-panel hidden" id="reportsView" data-view="reports">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Reports</p>
+            <h2>Insights for the month</h2>
+          </div>
+          <div class="toolbar-row">
+            <button class="button button-secondary" id="downloadCsvBtn" type="button">Download CSV</button>
+            <button class="button button-secondary" id="printReportBtn" type="button">Print Report</button>
+          </div>
+        </div>
+        <div class="report-grid">
+          <div class="report-card">
+            <p class="eyebrow">Monthly report</p>
+            <h3>Total expenses</h3>
+            <p class="report-value" id="reportMonthlyTotal">₹0</p>
+          </div>
+          <div class="report-card">
+            <p class="eyebrow">Roommate report</p>
+            <h3>Top contributor</h3>
+            <p class="report-value" id="reportTopContributor">—</p>
+          </div>
+          <div class="report-card">
+            <p class="eyebrow">Category report</p>
+            <h3>Most spent</h3>
+            <p class="report-value" id="reportTopCategory">—</p>
+          </div>
+        </div>
+        <div class="chart-panel">
+          <div class="chart-card">
+            <canvas id="reportPieChart" width="400" height="260" aria-label="Report pie chart"></canvas>
+          </div>
+          <div class="chart-card">
+            <canvas id="reportBarChart" width="400" height="260" aria-label="Report bar chart"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-panel hidden" id="settlementsView" data-view="settlements">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Settlements</p>
+            <h2>Who owes whom</h2>
+          </div>
+          <button class="button button-primary" id="shareSettlementBtn" type="button">Share hisab</button>
+        </div>
+        <div class="settlement-list" id="settlementList"></div>
+        <div class="dashboard-card settlement-history-panel">
+          <div class="card-header"><div><p class="eyebrow">Settlement history</p><h3>Recorded payments</h3></div><button class="button button-primary" id="addSettlementBtn" type="button">Add settlement</button></div>
+          <div class="toolbar-row settlement-filters"><select id="settlementFilterStatus"><option value="">All statuses</option><option>Pending</option><option>Paid</option><option>Cancelled</option></select><select id="settlementFilterPerson"><option value="">All people</option></select></div>
+          <div id="settlementHistoryList" class="settlement-list"></div>
+        </div>
+      </section>
+
+      <section class="content-panel hidden" id="budgetView" data-view="budget">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Budget</p>
+            <h2>Set your month plan</h2>
+          </div>
+        </div>
+        <div class="form-grid budget-grid" aria-label="Budget settings">
+          <div class="input-group">
+            <label for="budgetAmount">Monthly budget</label>
+            <input id="budgetAmount" type="number" min="0" step="1" placeholder="0" />
+          </div>
+          <div class="input-group">
+            <label for="budgetNotes">Budget notes</label>
+            <textarea id="budgetNotes" rows="3" placeholder="Add a short reminder for the month"></textarea>
+          </div>
+          <div class="form-actions full-width">
+            <button class="button button-primary" id="budgetSaveBtn" type="button">Save budget</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-panel hidden" id="featureView" data-view="feature">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow" id="featureEyebrow">Workspace</p>
+            <h2 id="featureTitle">Room</h2>
+            <p class="card-copy" id="featureDescription"></p>
+          </div>
+          <button class="button button-primary" id="featureAddBtn" type="button">Add item</button>
+        </div>
+        <div id="featureStats" class="feature-stats"></div>
+        <div id="featureFormWrap" class="feature-form-wrap hidden">
+          <form id="featureForm" class="form-grid" aria-label="Workspace item form"></form>
+        </div>
+        <div id="featureList" class="feature-list"></div>
+      </section>
+
+      <section class="content-panel hidden" id="settingsView" data-view="settings">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Settings</p>
+            <h2>Customize your workspace</h2>
+          </div>
+        </div>
+        <div class="settings-grid">
+          <div class="settings-card">
+            <h3>Display</h3>
+            <div class="toggle-row">
+              <label for="themeMode">Dark mode</label>
+              <input id="themeMode" type="checkbox" />
+            </div>
+            <div class="input-group">
+              <label for="currencySelect">Currency</label>
+              <select id="currencySelect">
+                <option value="₹">INR (₹)</option>
+                <option value="$">USD ($)</option>
+                <option value="€">EUR (€)</option>
+                <option value="£">GBP (£)</option>
+              </select>
+            </div>
+          </div>
+          <div class="settings-card">
+            <h3>Data backup</h3>
+            <button class="button button-secondary" id="exportJsonBtn" type="button">Export backup JSON</button>
+            <label class="file-upload">
+              <input id="importJsonInput" type="file" accept="application/json" />
+              Import backup JSON
+            </label>
+          </div>
+          <div class="settings-card">
+            <h3>Reset</h3>
+            <p>Reset all data to default and clear local storage.</p>
+            <button class="button button-danger" id="resetDataBtn" type="button">Reset data</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <div class="modal-overlay hidden" id="modalOverlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal" role="document" aria-labelledby="modalTitle">
+      <div class="modal-header">
+        <h2 id="modalTitle">Modal</h2>
+        <button class="button button-icon" id="modalCloseBtn" aria-label="Close modal">✕</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-footer" id="modalFooter"></div>
+    </div>
+  </div>
+
+  <template id="confirmTemplate">
+    <div class="confirm-panel">
+      <p id="confirmMessage"></p>
+      <div class="confirm-actions">
+        <button class="button button-secondary" id="confirmCancel">Cancel</button>
+        <button class="button button-danger" id="confirmAccept">Confirm</button>
+      </div>
+    </div>
+  </template>
+
+  <template id="detailsTemplate">
+    <div class="detail-panel"></div>
+  </template>
+
+  <script src="js/vendor/chart.min.js"></script>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
